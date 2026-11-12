@@ -1,0 +1,148 @@
+{
+  "users": [
+    {
+      "username": "admin",
+      "password": "admin123",
+      "role": "admin",
+      "name": "Administrador",
+      "gifts": [
+        {
+          "detail": "",
+          "imageUrl": "",
+          "buyUrl": ""
+        },
+        {
+          "detail": "",
+          "imageUrl": "",
+          "buyUrl": ""
+        },
+        {
+          "detail": "",
+          "imageUrl": "",
+          "buyUrl": ""
+        }
+      ],
+      "dailyGifts": ""
+    },
+    {
+      "username": "ana",
+      "password": "pass123",
+      "role": "participant",
+      "name": "Ana Farias",
+      "gifts": [
+        {
+          "detail": "Set de velas aromáticas Yankee Candle",
+          "imageUrl": "https://via.placeholder.com/150/8B0000/FFD700?text=%F0%9F%95%AF%EF%B8%8F",
+          "buyUrl": "https://www.amazon.com"
+        },
+        {
+          "detail": "Libro 'El nombre del viento'",
+          "imageUrl": "https://via.placeholder.com/150/1a1a2e/FFD700?text=%F0%9F%93%9A",
+          "buyUrl": "https://www.amazon.com"
+        },
+        {
+          "detail": "Kit de spa corporal premium",
+          "imageUrl": "https://via.placeholder.com/150/4a0080/FFD700?text=%F0%9F%9B%81%EF%B8%8F",
+          "buyUrl": "https://www.amazon.com"
+        }
+      ],
+      "dailyGifts": "Chocolates Ferrero Rocher"
+    },
+    {
+      "username": "david",
+      "password": "pass123",
+      "role": "participant",
+      "name": "David Cordova",
+      "gifts": [
+        {
+          "detail": "Taza navideña con chocolate caliente",
+          "imageUrl": "https://via.placeholder.com/150/00008B/FFD700?text=%E2%98%95",
+          "buyUrl": "https://www.amazon.com"
+        },
+        {
+          "detail": "Set de licores artesanales",
+          "imageUrl": "https://via.placeholder.com/150/006400/FFD700?text=%F0%9F%A5%83",
+          "buyUrl": "https://www.amazon.com"
+        },
+        {
+          "detail": "Auriculares inalámbricos Sony",
+          "imageUrl": "https://via.placeholder.com/150/333300/FFD700?text=%F0%9F%8E%A7",
+          "buyUrl": "https://www.amazon.com"
+        }
+      ],
+      "dailyGifts": "Palomitas gourmet y nueces mixtas"
+    },
+    {
+      "username": "alexander",
+      "password": "pass123",
+      "role": "participant",
+      "name": "Alexander Burgos",
+      "gifts": [
+        {
+          "detail": "Perfume Marc Jacobs Daisy",
+          "imageUrl": "https://via.placeholder.com/150/8B008B/FFD700?text=%F0%9F%8C%B8",
+          "buyUrl": "https://www.amazon.com"
+        },
+        {
+          "detail": "Cartera de cuero italiana",
+          "imageUrl": "https://via.placeholder.com/150/8B4513/FFD700?text=%F0%9F%91%9C",
+          "buyUrl": "https://www.amazon.com"
+        },
+        {
+          "detail": "Suscripción anual Netflix",
+          "imageUrl": "https://via.placeholder.com/150/CC0000/FFD700?text=%F0%9F%8E%AC",
+          "buyUrl": "https://www.netflix.com"
+        }
+      ],
+      "dailyGifts": "Mazapanes y dulces tradicionales mexicanos"
+    },
+    {
+      "username": "josue",
+      "password": "pass123",
+      "role": "participant",
+      "name": "Josue Valladolic",
+      "gifts": [
+        {
+          "detail": "Smartwatch Fitbit Sense 2",
+          "imageUrl": "https://via.placeholder.com/150/004D40/FFD700?text=%E2%8C%9A",
+          "buyUrl": "https://www.amazon.com"
+        },
+        {
+          "detail": "Juego de mesa Catan",
+          "imageUrl": "https://via.placeholder.com/150/E65100/FFD700?text=%F0%9F%8E%B2",
+          "buyUrl": "https://www.amazon.com"
+        },
+        {
+          "detail": "Cámara instantánea Polaroid",
+          "imageUrl": "https://via.placeholder.com/150/37474F/FFD700?text=%F0%9F%93%B7",
+          "buyUrl": "https://www.amazon.com"
+        }
+      ],
+      "dailyGifts": "Gomitas Haribo y chocolates Kisses"
+    },
+    {
+      "username": "frank",
+      "password": "pass123",
+      "role": "participant",
+      "name": "Frank Hinojosa",
+      "gifts": [
+        {
+          "detail": "Lámpara de sal del Himalaya",
+          "imageUrl": "https://via.placeholder.com/150/FF6F00/FFD700?text=%F0%9F%AA%A8",
+          "buyUrl": "https://www.amazon.com"
+        },
+        {
+          "detail": "Set de acuarelas profesionales",
+          "imageUrl": "https://via.placeholder.com/150/0D47A1/FFD700?text=%F0%9F%8E%A8",
+          "buyUrl": "https://www.amazon.com"
+        },
+        {
+          "detail": "Peluche gigante oso navideño",
+          "imageUrl": "https://via.placeholder.com/150/880E4F/FFD700?text=%F0%9F%A7%B8",
+          "buyUrl": "https://www.amazon.com"
+        }
+      ],
+      "dailyGifts": "Trufas de chocolate y caramelos de canela"
+    }
+  ]
+}
