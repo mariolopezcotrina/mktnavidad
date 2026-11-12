@@ -1133,6 +1133,33 @@
       }
     }
 
+    /* Botón flotante discreto en Login */
+    .login-audio-btn {
+      position: fixed;
+      bottom: 1.2rem;
+      left: 1.2rem;
+      z-index: 50;
+      background: rgba(90, 8, 12, 0.75);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 215, 0, 0.4);
+      color: #FFD700;
+      border-radius: 999px;
+      padding: 0.45rem 0.9rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .login-audio-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(255, 215, 0, 0.3);
+    }
+
     @media (max-width: 768px) {
       .santa-flyer {
         scale: 0.72;
@@ -1196,6 +1223,13 @@
      LOGIN SCREEN
 ═══════════════════════════════════════════ -->
   <div id="view-login" class="view active">
+
+    <!-- Botón discreto de audio en Login -->
+    <button type="button" onclick="toggleXmasAudio(event)" class="login-audio-btn"
+      title="Activar / Silenciar Cascabeles">
+      <i class="fa fa-volume-high xmas-audio-icon"></i>
+      <span class="xmas-audio-label">Cascabeles</span>
+    </button>
 
     <!-- Glowing Christmas Moon -->
     <div class="santa-moon" aria-hidden="true">
@@ -1486,6 +1520,11 @@
             <br />
             <span id="nav-role-badge" class="role-badge"></span>
           </div>
+          <!-- Botón Mute / Sonido de Cascabeles al costado de Salir -->
+          <button type="button" onclick="toggleXmasAudio(event)" class="btn-wine btn-sm"
+            title="Silenciar / Activar Cascabeles">
+            <i class="fa fa-volume-high xmas-audio-icon"></i>
+          </button>
           <button onclick="logout()" class="btn-wine btn-sm">
             <i class="fa fa-sign-out-alt mr-1"></i> Salir
           </button>
@@ -1768,6 +1807,162 @@
 ═══════════════════════════════════════════ -->
   <script>
     // ═══════════════════════════════════════════════════════════
+    // SINTETIZADOR DE CASCABELES NAVIDEÑOS (100% AUTÓNOMO SIN EXTERNOS)
+    // ═══════════════════════════════════════════════════════════
+    const XmasAudio = (function () {
+      let ctx = null;
+      let timer = null;
+      let isMuted = false;
+      let isPlaying = false;
+      let step = 0;
+
+      // Melodía de Jingle Bells (frecuencias en Hz, 0 = silencio/pausa)
+      const E5 = 659.25, G5 = 783.99, C5 = 523.25, D5 = 587.33, F5 = 698.46, G4 = 392.00;
+      const melody = [
+        // Jingle bells, jingle bells, jingle all the way
+        { f: E5, b: true }, { f: E5, b: false }, { f: E5, b: true }, { f: 0, b: false },
+        { f: E5, b: true }, { f: E5, b: false }, { f: E5, b: true }, { f: 0, b: false },
+        { f: E5, b: true }, { f: G5, b: false }, { f: C5, b: true }, { f: D5, b: false },
+        { f: E5, b: true }, { f: 0, b: false }, { f: 0, b: true }, { f: 0, b: false },
+        // Oh what fun it is to ride in a one-horse open sleigh
+        { f: F5, b: true }, { f: F5, b: false }, { f: F5, b: true }, { f: F5, b: false },
+        { f: F5, b: true }, { f: E5, b: false }, { f: E5, b: true }, { f: E5, b: false },
+        { f: E5, b: true }, { f: D5, b: false }, { f: D5, b: true }, { f: E5, b: false },
+        { f: D5, b: true }, { f: 0, b: false }, { f: G5, b: true }, { f: 0, b: false },
+        // Jingle bells, jingle bells, jingle all the way
+        { f: E5, b: true }, { f: E5, b: false }, { f: E5, b: true }, { f: 0, b: false },
+        { f: E5, b: true }, { f: E5, b: false }, { f: E5, b: true }, { f: 0, b: false },
+        { f: E5, b: true }, { f: G5, b: false }, { f: C5, b: true }, { f: D5, b: false },
+        { f: E5, b: true }, { f: 0, b: false }, { f: 0, b: true }, { f: 0, b: false },
+        // Oh what fun it is to ride in a one-horse open sleigh, hey!
+        { f: F5, b: true }, { f: F5, b: false }, { f: F5, b: true }, { f: F5, b: false },
+        { f: F5, b: true }, { f: E5, b: false }, { f: E5, b: true }, { f: E5, b: false },
+        { f: G5, b: true }, { f: G5, b: false }, { f: F5, b: true }, { f: D5, b: false },
+        { f: C5, b: true }, { f: 0, b: false }, { f: 0, b: true }, { f: 0, b: false }
+      ];
+
+      function initContext() {
+        if (!ctx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (AudioCtx) ctx = new AudioCtx();
+        }
+        if (ctx && ctx.state === 'suspended') {
+          ctx.resume().catch(() => { });
+        }
+      }
+
+      // Sonido metálico de cascabel navideño
+      function playSleighBell(time) {
+        if (!ctx || isMuted) return;
+        const freqs = [2637, 3520, 4186, 5274, 6644];
+        freqs.forEach((freq, i) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = i % 2 === 0 ? 'sine' : 'triangle';
+          osc.frequency.setValueAtTime(freq + (Math.random() * 40 - 20), time);
+
+          gain.gain.setValueAtTime(0.001, time);
+          gain.gain.exponentialRampToValueAtTime(0.018 / (i + 1), time + 0.015);
+          gain.gain.exponentialRampToValueAtTime(0.0001, time + 0.28);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(time);
+          osc.stop(time + 0.3);
+        });
+      }
+
+      // Nota dulce de caja de música / celesta navideña
+      function playChimeNote(freq, time) {
+        if (!ctx || isMuted || !freq) return;
+        const osc = ctx.createOscillator();
+        const overtone = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, time);
+
+        overtone.type = 'triangle';
+        overtone.frequency.setValueAtTime(freq * 2, time);
+
+        gain.gain.setValueAtTime(0.001, time);
+        gain.gain.exponentialRampToValueAtTime(0.065, time + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, time + 0.45);
+
+        const overGain = ctx.createGain();
+        overGain.gain.setValueAtTime(0.015, time);
+        overGain.gain.exponentialRampToValueAtTime(0.0001, time + 0.25);
+
+        osc.connect(gain);
+        overtone.connect(overGain);
+        overGain.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(time);
+        overtone.start(time);
+        osc.stop(time + 0.48);
+        overtone.stop(time + 0.48);
+      }
+
+      function tick() {
+        if (!ctx || isMuted) return;
+        if (ctx.state === 'suspended') ctx.resume().catch(() => { });
+        const now = ctx.currentTime;
+        const note = melody[step % melody.length];
+        if (note.b) playSleighBell(now);
+        if (note.f > 0) playChimeNote(note.f, now);
+        step++;
+      }
+
+      function start() {
+        initContext();
+        if (!ctx) return;
+        if (isPlaying) return;
+        isPlaying = true;
+        tick();
+        timer = setInterval(tick, 280);
+        updateUI();
+      }
+
+      function toggleMute() {
+        initContext();
+        if (!isPlaying) {
+          isMuted = false;
+          start();
+          return;
+        }
+        isMuted = !isMuted;
+        updateUI();
+      }
+
+      function updateUI() {
+        const active = isPlaying && !isMuted;
+        document.querySelectorAll('.xmas-audio-icon').forEach(icon => {
+          icon.className = active
+            ? 'fa fa-volume-high xmas-audio-icon'
+            : 'fa fa-volume-xmark xmas-audio-icon';
+        });
+        document.querySelectorAll('.xmas-audio-label').forEach(lbl => {
+          lbl.textContent = active ? 'Cascabeles: ON' : 'Silenciado';
+        });
+      }
+
+      return { start, toggleMute, isActive: () => isPlaying && !isMuted };
+    })();
+
+    function toggleXmasAudio(e) {
+      if (e) e.stopPropagation();
+      XmasAudio.toggleMute();
+    }
+
+    // Arrancar cascabeles automáticamente al primer clic o tecla del usuario en cualquier pantalla
+    ['click', 'keydown', 'touchstart'].forEach(evt => {
+      document.addEventListener(evt, function autoStartXmasAudio() {
+        XmasAudio.start();
+      }, { once: true });
+    });
+
+    // ═══════════════════════════════════════════════════════════
     // INITIAL DATA
     // ═══════════════════════════════════════════════════════════
     const STORAGE_KEY = 'xmas_app_data';
@@ -1915,6 +2110,7 @@
     // AUTH
     // ═══════════════════════════════════════════════════════════
     function login() {
+      XmasAudio.start(); // Asegura que los cascabeles suenen al ingresar
       const usernameEl = document.getElementById('login-username');
       const passwordEl = document.getElementById('login-password');
       clearErrors(['login-username-error', 'login-password-error', 'login-general-error']);
@@ -2131,9 +2327,6 @@
       openModal('modal-gift');
     }
 
-    // ═══════════════════════════════════════════════════════════
-    // MI PERFIL
-    // ═══════════════════════════════════════════════════════════
     // ═══════════════════════════════════════════════════════════
     // IMAGE UPLOAD & PREVIEW HELPERS
     // ═══════════════════════════════════════════════════════════
