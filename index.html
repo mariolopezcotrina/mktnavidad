@@ -1225,11 +1225,11 @@
   <div id="view-login" class="view active">
 
     <!-- Botón discreto de audio en Login -->
-    <button type="button" onclick="toggleXmasAudio(event)" class="login-audio-btn"
+    <!-- <button type="button" onclick="toggleXmasAudio(event)" class="login-audio-btn"
       title="Activar / Silenciar Cascabeles">
       <i class="fa fa-volume-high xmas-audio-icon"></i>
       <span class="xmas-audio-label">Cascabeles</span>
-    </button>
+    </button> -->
 
     <!-- Glowing Christmas Moon -->
     <div class="santa-moon" aria-hidden="true">
@@ -1914,9 +1914,22 @@
         step++;
       }
 
+      // function start() {
+      //   initContext();
+      //   if (!ctx) return;
+      //   if (isPlaying) return;
+      //   isPlaying = true;
+      //   tick();
+      //   timer = setInterval(tick, 280);
+      //   updateUI();
+      // }
+
       function start() {
         initContext();
         if (!ctx) return;
+        if (ctx.state === 'suspended') {
+          ctx.resume().catch(() => { });
+        }
         if (isPlaying) return;
         isPlaying = true;
         tick();
@@ -1950,16 +1963,37 @@
       return { start, toggleMute, isActive: () => isPlaying && !isMuted };
     })();
 
+    // function toggleXmasAudio(e) {
+    //   if (e) e.stopPropagation();
+    //   XmasAudio.toggleMute();
+    // }
+
+    // // Arrancar cascabeles automáticamente al primer clic o tecla del usuario en cualquier pantalla
+    // ['click', 'keydown', 'touchstart'].forEach(evt => {
+    //   document.addEventListener(evt, function autoStartXmasAudio() {
+    //     XmasAudio.start();
+    //   }, { once: true });
+    // });
+
     function toggleXmasAudio(e) {
       if (e) e.stopPropagation();
       XmasAudio.toggleMute();
     }
 
-    // Arrancar cascabeles automáticamente al primer clic o tecla del usuario en cualquier pantalla
-    ['click', 'keydown', 'touchstart'].forEach(evt => {
-      document.addEventListener(evt, function autoStartXmasAudio() {
+    // 1. Intentar arrancar automáticamente apenas carga la web
+    window.addEventListener('DOMContentLoaded', () => {
+      XmasAudio.start();
+    });
+    window.addEventListener('load', () => {
+      XmasAudio.start();
+    });
+
+    // 2. Respaldo inmediato: si el navegador bloqueó el autoplay inicial,
+    // arranca solo con el primer movimiento del mouse, clic, toque o tecla
+    ['mousemove', 'mousedown', 'click', 'keydown', 'touchstart', 'scroll'].forEach(evt => {
+      document.addEventListener(evt, function unlockAudio() {
         XmasAudio.start();
-      }, { once: true });
+      }, { once: true, passive: true });
     });
 
     // ═══════════════════════════════════════════════════════════
